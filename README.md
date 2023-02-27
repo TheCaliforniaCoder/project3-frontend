@@ -1,70 +1,150 @@
-# Getting Started with Create React App
+# Project-2-api-React-App
+---
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Developer: Tom Fairclough <br>
+Technologies: HTML/CSS/JavaScript/React/Axios
 
-## Available Scripts
+## Description
+- - -
 
-In the project directory, you can run:
+This is my first project building a full-stack apllication useing the MERN stack as part of the SEI GeneralAssembly Course. The task was to create a web application using ReactJS & MongoDB that met the requirements of a provided specification as a team of four.
 
-### `npm start`
+## Deployment Link
+- - - 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Technologies
+- - -
+This project utilised the following:
+- **Code Editor:** VSCode
+- **Programming Languages:** HTML, CSS, JavaScript, JSX
+- **JS-Libaries:** React, Axios
+- **Server:** Express
+- **Database:** MongoDB
+- **Version Control:** Git & Git Hub Source Control
+- **Design:** Figma
+- **Image Editors:** GNU Image Manipulation Programme
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Brief
+- - - 
 
-### `npm test`
+A tick denotes that the requirement has been delivered in this project release: 
+### Goals
+- &#x2611; Build a full stack web application. Must be your own work.
+- &#x2611; Use Express with React to build your application
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Technical Requirements
+- &#x2611; As a User, I should be able to interact with at least 2 models
+- &#x2611; As a User, I should be able to use authentication
+- &#x2611; As a User, I should have full CRUD on at least one of your models
+- &#x2611; As a User, I should be able to Add/Delete on any remaining models
 
-### `npm run build`
+### Optional Extras:
+- Build a UML Use-case diagram
+- Use JSDoc to document your project
+- Use a 3rd party API
+- Make application responsive
+- High quality, professional design
+- Redux
+- Automated Tests Using Jest or other Testing Frameworks
+- Allow users to upload files
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Planning
+- - -
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Our application is a social media platform that allows a User to log into their account. Create posts, add friends, and see a global feed of posts. We produced a wireframe and used Trello to plan the backlog of activities required to deliver the project. With one week for development, I focused on delivering the profile page of the apllication as well as owning the git repo; reviewing pull requests and code.
 
-### `npm run eject`
+### Wireframe
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+https://www.figma.com/file/0r22Y1xfk9pNu5cdQCQxiu/Social-media-app?node-id=0%3A1&t=Cax19TxXrQVgV4EJ-0
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+##  Build Process
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- - -
+In this section I step through the build process, highlighting extracts from the code base:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- As a team we built the core database functionaility and planned out the structture of the core React components so that we could begin to work independently.
 
-## Learn More
+- Set up both the Express server and the MongoDB Schemas. This included  database references to relate posts to users. We built seed files for the database and added a CORS Policy
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    ```JavaScript
+    const postSchema = new mongoose.Schema({
+      img: String,
+      content: { type: String , required: true},
+      likes: { type: Number, default: 0 },
+      createdBy: {type: String , required: true},
+      comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Commment'
+      }],
+    }, {
+      timestamps: true
+    })
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    ```
 
-### Code Splitting
+- Added full CRUD
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+    ```JavaScript
+    router.post('/api/posts/create/:id', (req, res) => {
+      User.findById(req.params.id)
+        .then((user) => {
+          Post.create({ content: req.body.content, createdBy:req.body.createdBy })
+            .then((newPost) => {
+              user.posts.push(newPost._id);
+              return user.save();
+            })
+            .then(() => {
+              res.status(201).json({ message: 'Post created successfully' });
+            })
+            .catch((error) => {
+              res.status(500).json({ error: error });
+            });
+        })
+        .catch((error) => {
+          res.status(500).json({ error: error });
+        });
+    });
+    ```
 
-### Analyzing the Bundle Size
+- Created functional components using useState and useEffect to allow the page to automatically update and re-render.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- Added CSS styling to the page using classes.
 
-### Making a Progressive Web App
+    ```CSS
+        .checkbox {
+          position: absolute;
+          top:0;
+          left: -42px; 
+          height: 20px;
+          width: 20px;
+          transition: 0.1s
+        }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+        .checkbox:hover {
+          transform: scale(1.1);
+        }
 
-### Advanced Configuration
+        .checkbox:active {
+          transform: scale(1.05);
+        }
+    ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Built in functionaility to allow a User to update and edit both their profile and posts.
 
-### Deployment
+- Built in conditional rendering so that certaiin components had additional functionaility depending on the page. For exmaple, on the profile page a User cannot like their own post, but on the feed a User cannot edit others posts. 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
+## Challenges
+- - -
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-  <br>
+
+
+- <br>
+
+
+##  Future Improvments
+- - -
+
+- The feed only shows friends posts

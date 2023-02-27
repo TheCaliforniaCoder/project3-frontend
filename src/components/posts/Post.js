@@ -1,25 +1,30 @@
-import React, { useState } from "react";
-import { editPost, addLike, findPost } from "../users/api";
+import React, { useState, useEffect } from "react";
+import { editPost, addLike, findPost, deleteMyPosts } from "../users/api";
 
-const Post = ({ postId }) => {
+const Post = (props) => {
   // Define a state variable (editMode) using the useState hook, initially set to false
   const [editMode, setEditMode] = useState(false);
-  const [postData, setPost] = useState({post: {
-                                          comments:[],
-                                          likes: '',
-                                          content:''  
-  }});
-  
-  findPost(postId)
-  .then(result => result.data)
-  .then(data => setPost(data))
+  const [postData, setPost] = useState({
+    post: {
+      comments:[],
+      likes: '',
+      content:''  
+    }
+  });
+
+  // Fetch post data on component mount
+  useEffect(() => {
+    findPost(props.postId)
+      .then(result => result.data)
+      .then(data => setPost(data));
+  }, [props.postId]);
 
   // Define a state variable (updatedPostBody) using the useState hook, initialized with the content of the post
   const [updatedPostBody, setUpdatedPostBody] = useState(postData.post.content);
 
-
   // Function to handle the click of the "Edit" button
   const handleEditClick = () => {
+    setUpdatedPostBody(postData.post.content);
     setEditMode(true);
   };
 
@@ -28,8 +33,10 @@ const Post = ({ postId }) => {
     // Call the editPost API with the post ID and updated post content, and set editMode to false when the promise resolves
     editPost(postData.post._id, updatedPostBody)
       .then(() => {
-        console.log("Post saved successfully");
         setEditMode(false);
+        findPost(props.postId)
+          .then(result => result.data)
+          .then(data => setPost(data));
       })
       .catch((error) => {
         console.error("Error editing post:", error);
@@ -43,14 +50,22 @@ const Post = ({ postId }) => {
   };
 
   // Function to handle the click of the "Like" button
-  const handleLikeButtonClick = (e) => {
+  const handleLikeButtonClick = () => {
     // Call the addLike API with the post ID
-    addLike(postData.post._id);
+    addLike(postData.post._id)
+      .then(() => {
+        findPost(props.postId)
+          .then(result => result.data)
+          .then(data => setPost(data));
+      })
+      .catch((error) => {
+        console.error("Error liking post:", error);
+      });
   };
 
-  // Render the component UI
   return (
-    <div>
+    <div className="post-wrapper">
+      <h4>Posted by: {postData.post.createdBy}</h4>
       {editMode ? (
         <div>
           <textarea value={updatedPostBody} onChange={handleTextareaChange} />
@@ -59,11 +74,11 @@ const Post = ({ postId }) => {
       ) : (
         <div>
           <p>{postData.post.content}</p>
-          <button onClick={handleEditClick}>Edit</button>
+          {props.profilePage && <button onClick={handleEditClick}>Edit</button>}
         </div>
       )}
       <div>
-        <button onClick={handleLikeButtonClick}>Like</button>
+        {!props.profilePage && <button onClick={handleLikeButtonClick}>Like</button>}
         <p>Likes: {postData.post.likes}</p>
       </div>
     </div>

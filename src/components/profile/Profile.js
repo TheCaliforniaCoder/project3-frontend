@@ -13,12 +13,18 @@ export default class Profile extends React.Component {
                                            key = {index}/>)
 
     return( 
-      <>
+      <div className='profile-wrapper'>
+        <div className='bio-wrapper'>
         <UserBio currentUser={this.props.currentUser} 
                  updateCurrentUserFromDatabase={this.props.updateCurrentUserFromDatabase}/>
+        </div>
         {allFriends}
-        <Feed currentUser={this.props.currentUser} profilePage={true}/>
-      </>
+        <div id="profile-feed">
+        <Feed currentUser={this.props.currentUser} 
+              profilePage={true}
+              updateCurrentUserFromDatabase={this.props.updateCurrentUserFromDatabase}/>
+              </div>
+      </div>
     )
   }
 }

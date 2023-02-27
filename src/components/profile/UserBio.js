@@ -8,7 +8,6 @@ const UserBio = (props) => {
 
   const [editMode, setEditMode] = useState(false);
   const [updatedUserDetails, updateDetails] = useState(props.currentUser);
-
   const handleEditClick = () => {
     setEditMode(true)
   };
@@ -35,25 +34,31 @@ const UserBio = (props) => {
   return (
       <>
       {editMode ? ( 
-        <div>
-          <img src={profilePic}/>
+        <div className="profile-details-wrapper">
+        <div className="image-wrapper">
+          <img className="profile-image" src={profilePic}/>
           <img className='pencil-icon' src={EditIcon} onClick={handleEditClick} width={50}/>
+          </div>
+          <div className="profile-details">
           <p>FirstName:</p><textarea id='firstName' value={updatedUserDetails.firstName} onChange={handleDetailsChange}/>          
           <p>LastName:</p><textarea id='lastName' value={updatedUserDetails.lastName} onChange={handleDetailsChange}/>
           <p>UserName:</p><textarea id='userName' value={updatedUserDetails.userName} onChange={handleDetailsChange}/>
           <p>Email:</p><textarea id='email' value={updatedUserDetails.email} onChange={handleDetailsChange}/>
           <p>Location:</p><textarea id='location' value={updatedUserDetails.location} onChange={handleDetailsChange}/>
           <button onClick={handleSaveClick}>Save</button>
+          </div>
       </div>     
       ) : (
-        <div>
-        <img src={profilePic}/>
-        <img className='pencil-icon' src={EditIcon} onClick={handleEditClick} width={50}/>
-        <p>FirstName: {props.currentUser.firstName}</p>
-        <p>LastName: {props.currentUser.lastName}</p>
-        <p>UserName: {props.currentUser.userName}</p>
-        <p>Email: {props.currentUser.email}</p>
-        <p>Location: {props.currentUser.location}</p>
+        <div className="profile-details-wrapper">
+          <div className="image-wrapper">
+        <img className="profile-image" src={profilePic}/>
+        <img className='pencil-icon' src={EditIcon} onClick={handleEditClick} width={20}/>
+        </div>
+        <div className="profile-details">
+        <h3>{props.currentUser.firstName} {props.currentUser.lastName}</h3>
+        <p>Alias: {props.currentUser.userName}</p>
+        <p>From: {props.currentUser.location}</p>
+        </div>
       </div>
       )}
     </>

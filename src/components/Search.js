@@ -72,23 +72,30 @@ class Search extends React.Component{
     })
   }
 
+  updateFriendsList = () => {
+    this.setState({ friendsList: this.state.friendsList });
+    this.props.updateCurrentUserFromDatabase(this.state.currentUserId)
+  };
+  
+
 render() {
         return (
             <div>
-                <label>Search for friends</label>
-                <input type = 'search'
-                        placeholder = "Search for friends"
+                <input className='friend-search' type = 'search'
+                        placeholder = "Search for friends..."
                         value = {this.state.searchValue}
                         onChange = {this.handleSearchChange}
                          />
+                <div className='results-wrapper'>
                 <Results searchResults={this.state.searchResults}
                          addToFriends={this.addToFriends}
                          addToFriendsList={this.addToFriendsList}
                          removeFromFriendsList={this.removeFromFriendsList}
                          friendsList={this.state.friendsList}
                          currentUserId={this.state.currentUserId}
-                    
+                         updateFriendsList={this.updateFriendsList}
                         updateFriendId={this.state.friendId}/>
+                        </div>
             </div>
         )
         }

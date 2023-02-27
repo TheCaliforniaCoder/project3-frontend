@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { getUserbyID } from './users/api';
 
 class Results extends Component{
     constructor(props) {
@@ -16,21 +17,23 @@ class Results extends Component{
     }
   }
 
-   handleFriendId = (friendId) => {
-    this.props.addToFriends(friendId)
-    console.log('handle friend id', friendId)
-    const { friendsList, addToFriendsList, removeFromFriendsList } = this.props;
+  handleFriendId = (friendId) => {
+    const { friendsList, addToFriendsList, removeFromFriendsList, updateFriendsList } = this.props;
     if (friendsList.includes(friendId)) {
       removeFromFriendsList(friendId);
     } else {
       addToFriendsList(friendId);
     }
+    // Update the parent component's friendsList state
+    updateFriendsList();
   };
+  
 
   updateFriendId = (friend) => {
     this.props.addToFriends(friend)
   }
 
+  
     render () {
          /* map searchedResults*/
      const usersArray = this.state.searchResults.map((item, index) => {
